@@ -1,13 +1,10 @@
-from aiogram import Dispatcher,types
-from canfig import bot,dp,ADMINS
+from aiogram import Dispatcher, types
+from canfig import bot, dp, ADMINS
 from random import choice
 
 
-
-
-
 async def echo_message(message: types.Message):
-    if message.from_user.id not  in ADMINS:
+    if message.from_user.id not in ADMINS:
 
         if message.text.lower() == 'game':
             a = ['⚽️', '🎰', '🏀', '🎯', '🎳', '🎲']
