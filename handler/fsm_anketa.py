@@ -4,6 +4,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from canfig import ADMINS
 from handler.client_kb import cancel_markup,submit_markup
+from database.bot_db import sql_command_insert
 
 
 
@@ -21,12 +22,12 @@ async def fsm_start(message: types.Message):
         await message.answer('Ты не админ!')
     else:
         await FSMAdmin.id.set()
-        await message.answer('id ментора:',reply_markup=cancel_markup)
+        await message.answer('telegram_id ментора:',reply_markup=cancel_markup)
 
 
 async def laod_id(message: types.Message, state: FSMContext):
     async with state.proxy() as FSMCONTEXT_PROXY_STORAGE:
-        FSMCONTEXT_PROXY_STORAGE['id'] = message.text
+        FSMCONTEXT_PROXY_STORAGE['telegram_id'] = message.text
     await FSMAdmin.next()
     await message.answer('Имя ментора?')
 
@@ -61,7 +62,7 @@ async def laod_group(message: types.Message, state: FSMContext):
     async with state.proxy() as FSMCONTEXT_PROXY_STORAGE:
         FSMCONTEXT_PROXY_STORAGE['group'] = message.text
         await message.answer(
-            f'id ментора: {FSMCONTEXT_PROXY_STORAGE["id"]} \n '
+            f'id ментора: {FSMCONTEXT_PROXY_STORAGE["telegram_id"]} \n '
             f'Имя ментора: {FSMCONTEXT_PROXY_STORAGE["name"]} \n'
             f'Направление ментора:{FSMCONTEXT_PROXY_STORAGE["direction"]} \n'
             f'Возратс ментора: {FSMCONTEXT_PROXY_STORAGE["age"]}\n'
@@ -73,12 +74,12 @@ async def laod_group(message: types.Message, state: FSMContext):
 
 async def sumbit_state(message: types.Message, state: FSMContext):
     if message.text.lower() == 'да':
-        # TODO: запись в бд
+        await sql_command_insert(state)
         await state.finish()
         await message.answer('все свободен ')
     if message.text.lower() == 'заново':
         await FSMAdmin.id.set()
-        await message.answer('id ментора')
+        await message.answer('telegram_id ментора')
 
 async def cancel_reg(message: types.Message,state: FSMContext):
     current_state = await state.get_state()

@@ -1,7 +1,7 @@
 from aiogram import Dispatcher,types
 from canfig import bot,dp
 from aiogram.types import InlineKeyboardMarkup,InlineKeyboardButton
-
+from database.bot_db import sql_command_random
 
 # @dp.message_handler(commands=['quiz'])
 async def quiz1(message: types.Message):
@@ -26,6 +26,8 @@ async def quiz1(message: types.Message):
     )
 
 
+
+
 # @dp.message_handler(commands=['mem'])
 async def mem_image(message: types.Message):
     await bot.send_photo(chat_id=message.from_user.id,
@@ -34,8 +36,19 @@ async def help_comands(message:types.Message):
     await message.reply('чем вам могу памочь')
 
 
+async def get_random_anketa(message: types.Message):
+    random_user = await sql_command_random()
+    await message.answer(
+        f'id ментора: {random_user[1]} \n '
+        f'Имя ментора: {random_user[2]} \n'
+        f'Направление ментора:{random_user[3]} \n'
+        f'Возратс ментора: {random_user[4]}\n'
+        f'группа ментора {random_user[5]}'
+    )
+
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(mem_image,commands=['mem'])
     dp.register_message_handler(quiz1,commands=['quiz'])
     dp.register_message_handler(help_comands,commands=['help'])
+    dp.register_message_handler(get_random_anketa,commands=['get'])
 
