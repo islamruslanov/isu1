@@ -5,6 +5,7 @@ db = sqlite3.connect("bot.sqlite3")
 cursor = db.cursor()
 
 
+
 def sql_create():
     global db, cursor
     if db:
@@ -19,6 +20,24 @@ def sql_create():
             "age INTEGER, "
             "groupp VARCHAR (50))"
         )
+
+
+        db.execute(
+            "CREATE TABLE  IF NOT EXISTS users "
+            "(telegram_id INTEGER PRIMARY KEY, "
+            "username VARCHAR (50), "
+            "full_name VARCHAR (50)) "
+        )
+
+        db.commit()
+
+
+
+async def sql_command_all_users():
+    return cursor.execute('SELECT * FROM users').fetchall()
+
+async def sql_command_insert_user(telegram_id,user_name,full_name):
+        cursor.execute('INSERT INTO users VALUES (?,?,?)', (telegram_id,user_name,full_name))
         db.commit()
 
 async def sql_command_insert(state):
@@ -26,6 +45,9 @@ async def sql_command_insert(state):
         cursor.execute('INSERT INTO mentors VALUES '
                        '(null,?,?,?,?,?)', tuple(data.values()))
         db.commit()
+
+
+
 
 
 async def sql_command_random():

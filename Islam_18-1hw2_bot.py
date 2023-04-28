@@ -2,7 +2,7 @@ from aiogram.utils import executor
 
 import logging
 from canfig import dp,bot,ADMINS
-from handler import clients, extra, callback, admin, fsm_anketa
+from handler import clients, extra, callback, admin, fsm_anketa,shedule
 from database.bot_db import sql_create
 
 
@@ -13,6 +13,7 @@ fsm_anketa.register_handlers_fsm(dp)
 extra.register_handlers_extra(dp)
 
 async def on_startup(dp):
+    await shedule.set_scheduler()
     sql_create()
     await bot.send_message(ADMINS[0], 'Я жив!')
 async def on_shutdown(dp):
